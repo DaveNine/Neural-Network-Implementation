@@ -6,7 +6,7 @@ array = np.array
 random = np.random
 exp = np.exp
 dot = np.dot
-plt.ion()
+#plt.ion()
 
 
 class Network(object):
@@ -104,13 +104,14 @@ class Network(object):
         z = np.clip(z, -500, 500)
         return exp(-z) / (1.0 + exp(-z))**2
 
+# Data import
 X_train, y_train = MNISTloader.load_mnist(r"D:\Google Drive\Python\Neural Network\MNIST", kind='train')
 
 # Initialization of network
 net = Network([784, 30, 10])
 train_X = X_train / 255
 train_Y = []
-c = []
+
 
 for k in range(0, len(y_train)):
     train_Y.append((np.zeros(10)))
@@ -120,13 +121,15 @@ train_Y = array(train_Y)
 
 # Mini batch info
 n = 10000
-batch_size = 10
-num_iter = 30
+batch_size = 50
+num_iter = 50
 
 # Randomize data
-train = list(zip(train_X[:10000], train_Y[:10000]))
+train = list(zip(train_X[:n], train_Y[:n]))
 
 # Iterations loop
+co = []
+ac = []
 for k in range(0, num_iter):
     random.shuffle(train)
     train_X, train_Y = zip(*train)
@@ -135,22 +138,30 @@ for k in range(0, num_iter):
 
     # batch update loop
     for bX, bY in zip(batch_X, batch_Y):
-        net.update_batch(bX, bY, 2.0)
+        net.update_batch(bX, bY, 0.8)
 
     # Output information about accuracy
+    eva = net.evaluate(train_X, train_Y)
+    ac.append(eva / n)
     print("Epoch: {0}: {1} / {2}".format(k,
-                                         net.evaluate(train_X, train_Y),
+                                         eva,
                                          n))
-    # Plotting in real time
-    plt.scatter(k, net.costFunction(train_X, train_Y))
-    plt.ylabel('Cost')
-    plt.xlabel('Iterations')
-    plt.pause(0.001)
-
-
-
-
+    co.append(net.costFunction(train_X, train_Y))
+    # # Plotting in real time
+    # plt.scatter(k, net.costFunction(train_X, train_Y))
+    # plt.ylabel('Cost')
+    # plt.xlabel('Iterations')
+    # plt.pause(0.001)
 
 print("Accuracy is at {:.2%}".format((net.evaluate(train_X, train_Y)/n)))
-while True:
-    plt.pause(0.05)
+
+plt.subplot(2, 1, 1)
+plt.plot(range(0, num_iter), co)
+plt.ylabel('Cost')
+plt.xlabel('Iterations')
+
+plt.subplot(2, 1, 2)
+plt.plot(range(0, num_iter), ac)
+plt.ylabel('Accuracy')
+plt.xlabel('Iterations')
+plt.show()
