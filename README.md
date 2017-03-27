@@ -11,7 +11,7 @@ in combination with varying the topology of a NN).
 
 Further, I'd like to do something cool with it. Perhaps try to replicate TensorKart, https://github.com/kevinhughes27/TensorKart, in the form of Super mario or something slightly more basic and less computationally expensive. His approach is a good one -- rather than writing in LUA -- a common scripting language that can be utilized with many emulators, giving you full access to the emulated RAM as a mini-API in the emulator -- one can use screenshots of the current frame as inputs to the NN. Unfortunately this means we will have to play through a level to "teach" super mario how to run through it. After a while (and maybe enough training?), super mario's NN *should* be good enough to handle a level on it's own, maybe with a bit of reinforced training as mentioned in Kevin's implementation.  My plan is as follows:
 
-~~~~~~~~~~~PHASE I~~~~~~~~~~~
+~~~~~~~~~~ PHASE I ~~~~~~~~~~
 
 1. Finish NN deep learning tutorial w/ MNIST
 
@@ -32,7 +32,7 @@ a recreated game -- modifying the source code.
 
 9. Figure out a way to load preset weights / nodes as a network to avoid learning every time -- can save the "best" network found.
 
-~~~~~~~~~~~PHASE II~~~~~~~~~~~
+~~~~~~~~~~ PHASE II ~~~~~~~~~~
 
 To run the AI, feed screenshot of it playing to NN, get output to determine the decision. Based on the decision, a control is made.
 
