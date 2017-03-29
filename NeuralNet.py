@@ -2,16 +2,20 @@ import numpy as np
 import matplotlib.pyplot as plt
 from MNISTloader import MNISTloader
 import random
+from ActivationFunction import ActivationFunction as AF
+from CostFunction import CostFunction as CF
 array = np.array
 random = np.random
 exp = np.exp
 dot = np.dot
-#plt.ion()
 
 
 class Network(object):
 
     def __init__(self, sizes):
+
+        self.cost = CF.MSE()
+        self.activ = AF.sigmoid()
         self.num_layers = len(sizes)
         self.sizes = sizes
         self.weights = [random.randn(x, y)/np.sqrt(y) for x, y in zip(self.sizes[:-1], self.sizes[1:])]
@@ -23,9 +27,9 @@ class Network(object):
         # Classification uses only sigmoid activation
         if type == "class":
 
-            for w, b in zip(net.weights, net.biases):
+            for w, b in zip(self.weights, self.biases):
                 z = dot(a, w) + b
-                a = self.sig(z)
+                a = self.activ.sig(z)
                 self.z.append(z)
                 self.a.append(a)
             return a
@@ -36,7 +40,7 @@ class Network(object):
 
             for k in range(0, self.num_layers - 2):
                 z = dot(a, self.weights[k]) + self.biases[k]
-                a = self.sig(z)
+                a = self.activ.sig(z)
                 self.z.append(z)
                 self.a.append(a)
             z = (dot(a, self.weights[k + 1])
@@ -51,12 +55,12 @@ class Network(object):
         bUpdate = []
 
         # Get output error & initialize activity
-        error = self.costDerivative(self.feedforward(train_in), train_out) * self.sigprime(self.z[-1])
+        error = (self.cost).delta(self.feedforward(train_in), train_out, self.z[-1])
         active = [train_in] + self.a
         d.append(error)
         # backpropogation step
         for k in range(1, self.num_layers - 1):
-            d.append(dot(self.weights[-k], error) * self.sigprime(self.z[-(k + 1)]))
+            d.append(dot(self.weights[-k], error) * self.activ.sigprime(self.z[-(k + 1)]))
             error = d[k]
         d = list(reversed(d))
 
@@ -87,28 +91,12 @@ class Network(object):
                 count += 1
         return count
 
-    def costFunction(self, inp, outp):
-        cost = 0
-        for x, y in zip(inp, outp):
-            cost = cost + (y - self.feedforward(x))**2
-        return (1.0 / (2 * len(inp))) * cost.sum()
-
-    def costDerivative(self, activation, y):
-        return (activation - y)
-
-    def sig(self, z):
-        z = np.clip(z, -500, 500)
-        return 1.0 / (1.0 + exp(-z))
-
-    def sigprime(self, z):
-        z = np.clip(z, -500, 500)
-        return exp(-z) / (1.0 + exp(-z))**2
 
 # Data import
 X_train, y_train = MNISTloader.load_mnist(r"D:\Google Drive\Python\Neural Network\MNIST", kind='train')
 
 # Initialization of network
-net = Network([784, 30, 10])
+net = Network([784, 100, 10])
 train_X = X_train / 255
 train_Y = []
 
@@ -120,9 +108,9 @@ train_Y = array(train_Y)
 
 
 # Mini batch info
-n = 10000
-batch_size = 50
-num_iter = 50
+n = 5000
+batch_size = 10
+num_iter = 30
 
 # Randomize data
 train = list(zip(train_X[:n], train_Y[:n]))
@@ -138,7 +126,7 @@ for k in range(0, num_iter):
 
     # batch update loop
     for bX, bY in zip(batch_X, batch_Y):
-        net.update_batch(bX, bY, 0.8)
+        net.update_batch(bX, bY, 0.5)
 
     # Output information about accuracy
     eva = net.evaluate(train_X, train_Y)
@@ -146,22 +134,19 @@ for k in range(0, num_iter):
     print("Epoch: {0}: {1} / {2}".format(k,
                                          eva,
                                          n))
-    co.append(net.costFunction(train_X, train_Y))
-    # # Plotting in real time
-    # plt.scatter(k, net.costFunction(train_X, train_Y))
-    # plt.ylabel('Cost')
-    # plt.xlabel('Iterations')
-    # plt.pause(0.001)
+    co.append(CF.MSE.f(net.feedforward(train_X), train_Y))
+
 
 print("Accuracy is at {:.2%}".format((net.evaluate(train_X, train_Y)/n)))
 
-plt.subplot(2, 1, 1)
+plt.subplot(2,1,1)
 plt.plot(range(0, num_iter), co)
-plt.ylabel('Cost')
-plt.xlabel('Iterations')
+plt.xlabel("Epochs")
+plt.ylabel("Cost")
 
 plt.subplot(2, 1, 2)
 plt.plot(range(0, num_iter), ac)
-plt.ylabel('Accuracy')
-plt.xlabel('Iterations')
+plt.xlabel("Epochs")
+plt.ylabel("Accuracy")
+
 plt.show()
