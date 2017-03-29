@@ -4,6 +4,7 @@ import numpy as np
 
 
 class MNISTloader:
+    @staticmethod
     def load_mnist(path, kind='train'):
         labels_path = os.path.join(path, '%s-labels.idx1-ubyte' % kind)
         images_path = os.path.join(path, '%s-images.idx3-ubyte' % kind)

@@ -1,6 +1,7 @@
 import numpy as np
 exp = np.exp
 
+
 class ActivationFunction:
 
     class sigmoid:
