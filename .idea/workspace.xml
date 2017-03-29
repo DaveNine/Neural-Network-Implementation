@@ -3,9 +3,6 @@
   <component name="ChangeListManager">
     <list default="true" id="ed10b6b6-cf42-4d90-8e3e-a553df1241e0" name="Default" comment="">
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/ActivationFunction.py" afterPath="$PROJECT_DIR$/ActivationFunction.py" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/CostFunction.py" afterPath="$PROJECT_DIR$/CostFunction.py" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/MNISTloader.py" afterPath="$PROJECT_DIR$/MNISTloader.py" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="TRACKING_ENABLED" value="true" />
@@ -327,10 +324,18 @@
       <option name="presentableId" value="Default" />
       <updated>1488093484092</updated>
     </task>
+    <task id="LOCAL-00001" summary="minor changes">
+      <created>1490787741715</created>
+      <option name="number" value="00001" />
+      <option name="presentableId" value="LOCAL-00001" />
+      <option name="project" value="LOCAL" />
+      <updated>1490787741715</updated>
+    </task>
+    <option name="localTasksCounter" value="2" />
     <servers />
   </component>
   <component name="ToolWindowManager">
-    <frame x="807" y="0" width="974" height="1047" extended-state="0" />
+    <frame x="807" y="0" width="974" height="1047" extended-state="1" />
     <editor active="true" />
     <layout>
       <window_info id="Project" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.21607515" sideWeight="0.5" order="0" side_tool="false" content_ui="combo" />
@@ -360,6 +365,8 @@
     <ignored-roots>
       <path value="$PROJECT_DIR$" />
     </ignored-roots>
+    <MESSAGE value="minor changes" />
+    <option name="LAST_COMMIT_MESSAGE" value="minor changes" />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>
