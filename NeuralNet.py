@@ -14,6 +14,9 @@ class Network(object):
 
     def __init__(self, sizes):
 
+        self.totalcost = []
+        self.accuracy = []
+
         self.cost = CF.MSE()
         self.activ = AF.sigmoid()
         self.num_layers = len(sizes)
@@ -82,9 +85,31 @@ class Network(object):
             self.weights = [w - (alpha / len(batch_in)) * wp for w, wp in zip(self.weights, wUp)]
             self.biases = [b - (alpha / len(batch_in)) * bp for b, bp in zip(self.biases, bUp)]
 
+    def SGD(self, train_X, train_Y, num_iter, batch_size, alpha):
+
+        train = list(zip(train_X, train_Y))
+        for k in range(0, num_iter):
+            random.shuffle(train)
+            train_X, train_Y = zip(*train)
+            batch_X = [train_X[k:k + batch_size] for k in range(0, len(train_X), batch_size)]
+            batch_Y = [train_Y[k:k + batch_size] for k in range(0, len(train_Y), batch_size)]
+
+            # batch update loop
+            for bX, bY in zip(batch_X, batch_Y):
+                self.update_batch(bX, bY, alpha)
+
+            # Output information about accuracy
+            eva = self.evaluate(train_X, train_Y)
+            self.accuracy.append(eva / len(train))
+            print("Epoch: {0}: {1} / {2}".format(k+1,
+                                                 eva,
+                                                 len(train)))
+            self.totalcost.append(CF.MSE.f(self.feedforward(train_X), train_Y))
+        print("Accuracy is at {:0.2%}".format(eva / len(train)))
+
     def evaluate(self, train_X, train_Y):
         count = 0
-        for k in range(0, n):
+        for k in range(0, len(train_X)):
             true = (np.argmax(train_Y[k]) + 1) % 10
             predict = (np.argmax(net.feedforward(train_X[k])) + 1) % 10
             if true == predict:
@@ -97,56 +122,27 @@ X_train, y_train = MNISTloader.load_mnist(r"D:\Google Drive\Python\Neural Networ
 
 # Initialization of network
 net = Network([784, 100, 10])
-train_X = X_train / 255
+
+# Preprocess Data for input
+N = 1000
+train_X = X_train[:N] / 255
 train_Y = []
-
-
 for k in range(0, len(y_train)):
     train_Y.append((np.zeros(10)))
     train_Y[k][y_train[k] - 1] = 1
-train_Y = array(train_Y)
+train_Y = array(train_Y[:N])
 
+# Run Stochastic Gradient Descent
+net.SGD(train_X, train_Y, 50, 25, 0.5)
 
-# Mini batch info
-n = 5000
-batch_size = 10
-num_iter = 30
-
-# Randomize data
-train = list(zip(train_X[:n], train_Y[:n]))
-
-# Iterations loop
-co = []
-ac = []
-for k in range(0, num_iter):
-    random.shuffle(train)
-    train_X, train_Y = zip(*train)
-    batch_X = [train_X[k:k + batch_size] for k in range(0, n, batch_size)]
-    batch_Y = [train_Y[k:k + batch_size] for k in range(0, n, batch_size)]
-
-    # batch update loop
-    for bX, bY in zip(batch_X, batch_Y):
-        net.update_batch(bX, bY, 0.5)
-
-    # Output information about accuracy
-    eva = net.evaluate(train_X, train_Y)
-    ac.append(eva / n)
-    print("Epoch: {0}: {1} / {2}".format(k,
-                                         eva,
-                                         n))
-    co.append(CF.MSE.f(net.feedforward(train_X), train_Y))
-
-
-print("Accuracy is at {:.2%}".format((net.evaluate(train_X, train_Y)/n)))
-
+# Plot Results
 plt.subplot(2,1,1)
-plt.plot(range(0, num_iter), co)
+plt.plot(range(0, 50), net.totalcost)
 plt.xlabel("Epochs")
 plt.ylabel("Cost")
 
 plt.subplot(2, 1, 2)
-plt.plot(range(0, num_iter), ac)
+plt.plot(range(0, 50), net.accuracy)
 plt.xlabel("Epochs")
 plt.ylabel("Accuracy")
-
 plt.show()
